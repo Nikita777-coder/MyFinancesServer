@@ -12,13 +12,18 @@ import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class ControllerAdvices {
-    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class, PermissionDenyException.class})
-    private @ResponseBody ResponseEntity<String> handleIllegalArguments(RuntimeException ex) {
+    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
+    private @ResponseBody ResponseEntity<String> handleBAD_REQUEST(RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({NoSuchElementException.class, UsernameNotFoundException.class})
-    private @ResponseBody ResponseEntity<String> handleNoSuchElement(NoSuchElementException ex) {
+    private @ResponseBody ResponseEntity<String> handleNOT_FOUND(RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({PermissionDenyException.class})
+    private @ResponseBody ResponseEntity<String> handleFORBIDDEN(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 }

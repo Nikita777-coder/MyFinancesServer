@@ -1,9 +1,11 @@
 package app.auth.controllers;
 
+import app.auth.dto.UserOutData;
 import app.auth.dto.request.SignInRequest;
 import app.auth.dto.request.SignUpRequest;
 import app.auth.entities.user.UserEntity;
 import app.auth.servicies.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +24,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserEntity> createUser(@RequestBody SignUpRequest request) {
-        UserEntity response = authService.signup(request);
+    public ResponseEntity<UserOutData> createUser(@Valid @RequestBody SignUpRequest request) {
+        UserOutData response = authService.signup(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> enter(@RequestBody SignInRequest request) {
+    public ResponseEntity<String> enter(@Valid @RequestBody SignInRequest request) {
         authService.signin(request);
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
