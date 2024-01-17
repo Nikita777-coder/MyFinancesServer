@@ -34,19 +34,11 @@ public class UserService {
         return userMapper.userEntityToUserOutData(userRepository.save(entity));
     }
     public UserEntity getUser(SignInRequest request) {
-        Optional<UserEntity> foundUser;
-
         if (request.getLogin() == null) {
-            foundUser = userRepository.findByEmail(request.getEmail());
-        } else {
-            foundUser = userRepository.findByLogin(request.getLogin());
+            return getUserByEmail(request.getEmail());
         }
 
-        if (foundUser.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        return foundUser.get();
+        return getUserByLogin(request.getLogin());
     }
     public boolean isActive(SignInRequest request) {
         return getUser(request).getIsActive();
@@ -59,11 +51,36 @@ public class UserService {
         userRepository.deleteAll();
     }
     public UpdateUserDto updateUser(UpdateUserDto userUpdatedData) {
-        SignInRequest request = new SignInRequest();
-        request.setEmail(userUpdatedData.getRequestEmail());
-        getUser(request);
+        UserEntity foundUser = getUserByEmail(userUpdatedData.getRequestEmail());
 
-        return userMapper.userEntityToUpdateUserDto(userRepository.save(userMapper.updateUserDtoToUserEntity(userUpdatedData)));
+        UserEntity updatedUser = userMapper.updateUserDtoToUserEntity(userUpdatedData);
+        updatedUser.setId(foundUser.getId());
+
+        return updateUser(updatedUser);
+    }
+
+    public UpdateUserDto updateUser(UserEntity updatedUserEntity) {
+        return userMapper.userEntityToUpdateUserDto(userRepository.save(updatedUserEntity));
+    }
+
+    private UserEntity getUserByEmail(String email) {
+        Optional<UserEntity> foundUser = userRepository.findByEmail(email);
+
+        if (foundUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return foundUser.get();
+    }
+
+    private UserEntity getUserByLogin(String login) {
+        Optional<UserEntity> foundUser = userRepository.findByLogin(login);
+
+        if (foundUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return foundUser.get();
     }
 //    private UserDetails extractCurrentUser() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
