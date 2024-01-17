@@ -3,6 +3,7 @@ package app.auth.servicies;
 import app.auth.dto.UserOutData;
 import app.auth.dto.request.SignInRequest;
 import app.auth.dto.request.SignUpRequest;
+import app.auth.entities.user.UserEntity;
 import app.auth.mappers.UserMapper;
 import app.exceptions.PermissionDenyException;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,14 @@ public class AuthService {
     public void signin(SignInRequest request) {
         // emailService.sendSomeoneTryToEnterToYourAccountMessage()
         checkActiveAccount(request);
-        UserOutData resultUser = userMapper.userEntityToUserOutData(userService.getUser(request));
+        UserEntity resultUser = userService.getUser(request);
 
         if (!passwordEncoder.matches(request.getPassword(), resultUser.getPassword())) {
             throw new IllegalArgumentException("password is invalid!");
         }
+
+        resultUser.setIsActive(true);
+        userService.updateUser(resultUser);
     }
     private void checkActiveAccount(SignInRequest request) {
         if (userService.isActive(request)) {
