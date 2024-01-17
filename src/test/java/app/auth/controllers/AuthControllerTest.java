@@ -4,28 +4,28 @@ import app.auth.dto.UserOutData;
 import app.auth.dto.request.SignInRequest;
 import app.auth.dto.request.SignUpRequest;
 import app.auth.dto.request.UpdateUserDto;
-import app.auth.entities.user.UserEntity;
-import app.auth.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,6 +39,19 @@ class AuthControllerTest {
     private void signUpUser(String email, String password) {
         SignUpRequest signUpRequest = new SignUpRequest(email, password);
         restTemplate.postForEntity("/auth/signup", signUpRequest, UserOutData.class);
+    }
+
+    private void turnOffUser(String email, String password) {
+        UpdateUserDto updateUserDto = UpdateUserDto.builder().isActive(false)
+                .password(password)
+                .requestEmail(email)
+                .build();
+        restTemplate.exchange("/user/update_profile", HttpMethod.PATCH, new HttpEntity<>(updateUserDto), String.class);
+    }
+
+    @BeforeEach
+    public void setup() {
+        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
     @AfterEach
@@ -72,16 +85,18 @@ class AuthControllerTest {
         SignUpRequest input1 = new SignUpRequest("some@mail.ru", "password01");
         SignUpRequest input2 = new SignUpRequest("some@mail.ru", "password01");
         ResponseEntity<UserOutData> response1 = restTemplate.postForEntity("/auth/signup", input1, UserOutData.class);
-        ResponseEntity<UserOutData> response2 = restTemplate.postForEntity("/auth/signup", input2, UserOutData.class);
-        assertTrue(response1.getStatusCode() == HttpStatus.CREATED && response2.getStatusCode() == HttpStatus.BAD_REQUEST);
+
+        ResponseEntity<String> response2 = restTemplate.exchange("/auth/signup", HttpMethod.POST, new HttpEntity<>(input2), String.class);
+        assertTrue(response1.getStatusCode() == HttpStatus.CREATED &&
+                response2.getStatusCode() == HttpStatus.BAD_REQUEST);
     }
 
     @Test
     @DisplayName("sign in test; give SignInRequest(some@mail.ru; password01) and sign up this user before; must return OK code")
     void enterTest1() {
         signUpUser("some@mail.ru","password01");
-        UpdateUserDto updateUserDto = UpdateUserDto.builder().isActive(false).requestEmail("some@mail.ru").build();
-        restTemplate.patchForObject("/user/update_profile", updateUserDto, UpdateUserDto.class);
+        turnOffUser("some@mail.ru","password01");
+
         SignInRequest input = new SignInRequest();
         input.setEmail("some@mail.ru");
         input.setPassword("password01");
@@ -92,9 +107,11 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("sign in test; give SignInRequest(some@mail.ru; password01) and sign up this user before. " +
-            "Then try to enter to account when it is active; second request must return BAD_REQUEST code and first OK code")
+            "Then try to enter to account when it is active; second request must return FORBIDDEN code and first OK code")
     void enterTest2() {
         signUpUser("some@mail.ru","password01");
+        turnOffUser("some@mail.ru","password01");
+
         SignInRequest input = new SignInRequest();
         input.setEmail("some@mail.ru");
         input.setPassword("password01");
@@ -102,18 +119,20 @@ class AuthControllerTest {
         ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
         ResponseEntity<String> response1 = restTemplate.postForEntity("/auth/signin", input, String.class);
         assertTrue(response.getStatusCode() == HttpStatus.OK &&
-                response1.getStatusCode() == HttpStatus.BAD_REQUEST);
+                response1.getStatusCode() == HttpStatus.FORBIDDEN);
     }
 
     @Test
     @DisplayName("sign in test; give SignInRequest(somemail.ru; password01) and sign up this user before with correct mail; must return BAD_REQUEST code")
     void enterTest3() {
         signUpUser("some@mail.ru","password01");
+        turnOffUser("some@mail.ru","password01");
+
         SignInRequest input = new SignInRequest();
-        input.setEmail("some@mail.ru");
+        input.setEmail("somemail.ru");
         input.setPassword("password01");
 
         ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
-        assertSame(HttpStatus.OK, response.getStatusCode());
+        assertSame(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
