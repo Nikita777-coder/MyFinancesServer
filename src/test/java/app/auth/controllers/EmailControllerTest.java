@@ -5,39 +5,30 @@ import app.auth.entities.VerificationCodeEntity;
 import app.auth.repositories.VerificationCodesRepository;
 import app.auth.servicies.EmailService;
 import app.auth.servicies.VerificationCodesService;
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetupTest;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.lang.reflect.InvocationTargetException;
-import java.time.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,15 +50,16 @@ class EmailControllerTest {
     @Mock
     private JavaMailSender javaMailSender;
 
+    private final List<String> testEmails = Arrays.asList("reta2224@jcnorris.com", "ckk0xg0320@waterisgone.com", "mflwk2b5sp@maili.fun");
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
     @BeforeEach
     void setUp() {
         verificationCodesService = new VerificationCodesService(verificationCodesRepository, passwordEncoder);
         emailService = new EmailService(javaMailSender, verificationCodesService, verificationCodesRepository);
     }
-
-    private final List<String> testEmails = Arrays.asList("reta2224@jcnorris.com", "ckk0xg0320@waterisgone.com", "mflwk2b5sp@maili.fun");
-    @Autowired
-    private TestRestTemplate restTemplate;
     @Test
     @DisplayName("send verification code test; give first email from testEmails; must return 201 (CREATED) status code")
     void sendVerificationCode1() {

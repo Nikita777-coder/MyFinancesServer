@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
 public class UpdateUserDto {
     @NotBlank(message = "email can't be empty!")
     private String requestEmail;
