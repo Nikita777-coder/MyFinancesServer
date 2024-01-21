@@ -106,6 +106,23 @@
             <artifactId>httpclient5</artifactId>
             <version>5.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>smtp</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+            <version>1.5.10</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

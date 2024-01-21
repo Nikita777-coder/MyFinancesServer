@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -20,10 +22,6 @@ public class VerificationCodesService {
     private final PasswordEncoder encoder;
 
     public VerificationCodeEntity addNewVerificationCode(EmailVerificationRequest emailVerificationRequest) {
-        if (verificationCodesRepository.findByEmail(emailVerificationRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("verification code has already send to email");
-        }
-
         VerificationCodeEntity newVerificationCodeEntity = new VerificationCodeEntity();
         newVerificationCodeEntity.setEmail(emailVerificationRequest.getEmail());
         newVerificationCodeEntity.setVerificationCode(encoder.encode(emailVerificationRequest.getVerificationCode()));
@@ -33,20 +31,22 @@ public class VerificationCodesService {
     }
 
     public void checkVerificationRequest(EmailVerificationRequest emailVerificationRequest) {
-        Optional<VerificationCodeEntity> result = verificationCodesRepository.findByEmail(emailVerificationRequest.getEmail());
+        Optional<List<VerificationCodeEntity>> result = verificationCodesRepository.findByEmail(emailVerificationRequest.getEmail());
 
-        if (result.isEmpty()) {
+        if (result.isEmpty() || result.get().isEmpty()) {
             throw new IllegalArgumentException("there is no verification code send to email");
         }
 
-        VerificationCodeEntity resultEntity = result.get();
+        VerificationCodeEntity resultEntity = result.get().get(result.get().size() - 1);
 
-        if (resultEntity.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("time of verification code is expired");
+        if (LocalDateTime.now().isAfter(resultEntity.getExpiredAt())) {
+            // log.warn("not correct date");
+            throw new IllegalArgumentException("invalid request!");
         }
 
         if (!resultEntity.getVerificationCode().equals(encoder.encode(emailVerificationRequest.getVerificationCode()))) {
-            throw new IllegalArgumentException("not correct verification code");
+            // log.warn("not correct verification code");
+            throw new IllegalArgumentException("invalid request!");
         }
     }
 }

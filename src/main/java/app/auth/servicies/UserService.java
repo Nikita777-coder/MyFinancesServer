@@ -46,10 +46,6 @@ public class UserService {
     public boolean isEmailExist(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
-
-    public void deleteAll() {
-        userRepository.deleteAll();
-    }
     public UpdateUserDto updateUser(UpdateUserDto userUpdatedData) {
         UserEntity foundUser = getUserByEmail(userUpdatedData.getRequestEmail());
 

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Objects;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RequiredArgsConstructor
-//@AutoConfigureTestDatabase(replace = NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class AuthControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -52,11 +53,6 @@ class AuthControllerTest {
     @BeforeEach
     public void setup() {
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-    }
-
-    @AfterEach
-    void cleanUsers() {
-        restTemplate.delete("/user/delete_all");
     }
 
     @Test

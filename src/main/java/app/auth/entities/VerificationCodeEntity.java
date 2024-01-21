@@ -1,9 +1,7 @@
 package app.auth.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +11,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class VerificationCodeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

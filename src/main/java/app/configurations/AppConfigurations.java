@@ -13,9 +13,4 @@ public class AppConfigurations {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public JavaMailSender mailSender() {
-        return new JavaMailSenderImpl();
-    }
 }

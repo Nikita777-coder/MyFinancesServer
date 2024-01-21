@@ -28,9 +28,4 @@ public class UserController {
         UpdateUserDto response = userService.updateUser(userUpdatedData);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @DeleteMapping("/delete_all")
-    public void deleteAll() {
-        userService.deleteAll();
-    }
 }
