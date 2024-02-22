@@ -21,13 +21,12 @@ public class AuthService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserOutData signup(SignUpRequest request) {
-        UserOutData userOutData = userService.createUser(userMapper.signUpDtoToUserEntity(request));
-        return userOutData;
+        return userService.createUser(userMapper.signUpDtoToUserEntity(request));
     }
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void signin(SignInRequest request) {
         // emailService.sendSomeoneTryToEnterToYourAccountMessage()
-        //checkActiveAccount(request);
+        checkActiveAccount(request);
         UserEntity resultUser = userService.getUser(request);
 
         if (!passwordEncoder.matches(request.getPassword(), resultUser.getPassword())) {
