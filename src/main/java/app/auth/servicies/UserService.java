@@ -30,7 +30,7 @@ public class UserService {
             throw new IllegalArgumentException("user with this login exists");
         }
 
-        entity.setIsActive(true);
+        //entity.setIsActive(true);
         return userMapper.userEntityToUserOutData(userRepository.save(entity));
     }
     public UserEntity getUser(SignInRequest request) {

@@ -131,4 +131,16 @@ class AuthControllerTest {
         ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
         assertSame(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
+    @Test
+    @DisplayName("signUpDtoToUserEntity test;" +
+            "give SignUpRequest{email=\"mrucj\", login=\"ieudjfvh\", password=\"flvnslvnsc\"};" +
+            "SignUpRequest password must be equal to entity password")
+    void bcryptTest() {
+        String rawPassword = "Password0193";
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        PasswordEncoder encoder1 = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(rawPassword);
+        assertTrue(encoder1.matches(rawPassword, encodedPassword));
+    }
 }
