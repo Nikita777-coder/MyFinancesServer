@@ -5,7 +5,6 @@ import app.auth.dto.request.SignInRequest;
 import app.auth.dto.request.SignUpRequest;
 import app.auth.dto.request.UpdateUserDto;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,9 +36,9 @@ class AuthControllerTest {
     private TestRestTemplate restTemplate;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    private void signUpUser(String email, String password) {
+    private UserOutData signUpUser(String email, String password) {
         SignUpRequest signUpRequest = new SignUpRequest(email, password);
-        restTemplate.postForEntity("/auth/signup", signUpRequest, UserOutData.class);
+        return restTemplate.postForEntity("/auth/signup", signUpRequest, UserOutData.class).getBody();
     }
 
     private void turnOffUser(String email, String password) {
@@ -90,8 +89,8 @@ class AuthControllerTest {
     @Test
     @DisplayName("sign in test; give SignInRequest(some@mail.ru; password01) and sign up this user before; must return OK code")
     void enterTest1() {
-        signUpUser("some@mail.ru","password01");
-        turnOffUser("some@mail.ru","password01");
+        var user = signUpUser("some@mail.ru","password01");
+        turnOffUser("some@mail.ru", user.getPassword());
 
         SignInRequest input = new SignInRequest();
         input.setEmail("some@mail.ru");
@@ -105,8 +104,8 @@ class AuthControllerTest {
     @DisplayName("sign in test; give SignInRequest(some@mail.ru; password01) and sign up this user before. " +
             "Then try to enter to account when it is active; second request must return FORBIDDEN code and first OK code")
     void enterTest2() {
-        signUpUser("some@mail.ru","password01");
-        turnOffUser("some@mail.ru","password01");
+        var user = signUpUser("some@mail.ru","password01");
+        turnOffUser("some@mail.ru", user.getPassword());
 
         SignInRequest input = new SignInRequest();
         input.setEmail("some@mail.ru");
@@ -121,8 +120,8 @@ class AuthControllerTest {
     @Test
     @DisplayName("sign in test; give SignInRequest(somemail.ru; password01) and sign up this user before with correct mail; must return BAD_REQUEST code")
     void enterTest3() {
-        signUpUser("some@mail.ru","password01");
-        turnOffUser("some@mail.ru","password01");
+        var user = signUpUser("some@mail.ru","password01");
+        turnOffUser("some@mail.ru", user.getPassword());
 
         SignInRequest input = new SignInRequest();
         input.setEmail("somemail.ru");

@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/email_exists")
+    @GetMapping("/email_exist")
     public ResponseEntity<Boolean> getEmail(@RequestBody String email) {
         Boolean response = userService.isEmailExist(email);
         return new ResponseEntity<>(response, HttpStatus.OK);
