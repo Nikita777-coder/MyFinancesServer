@@ -27,7 +27,7 @@ public class UserService {
 //    }
     public UserOutData createUser(UserEntity entity) {
         if (userRepository.findByEmail(entity.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("user with this login exists");
+            throw new IllegalArgumentException("user with this email exists");
         }
 
         //entity.setIsActive(true);
