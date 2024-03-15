@@ -1,4 +1,5 @@
-.idea
-target
+/.idea/
+/target/
 MyFinancesServer.iml
 MyNotes.md
+DeveloperNotes.md
