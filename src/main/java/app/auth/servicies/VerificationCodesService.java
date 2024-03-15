@@ -31,13 +31,13 @@ public class VerificationCodesService {
     }
 
     public void checkVerificationRequest(EmailVerificationRequest emailVerificationRequest) {
-        Optional<List<VerificationCodeEntity>> result = verificationCodesRepository.findByEmail(emailVerificationRequest.getEmail());
+        List<VerificationCodeEntity> result = verificationCodesRepository.findAllByEmail(emailVerificationRequest.getEmail());
 
-        if (result.isEmpty() || result.get().isEmpty()) {
+        if (result.isEmpty()) {
             throw new IllegalArgumentException("there is no verification code send to email");
         }
 
-        VerificationCodeEntity resultEntity = result.get().get(result.get().size() - 1);
+        VerificationCodeEntity resultEntity = result.get(result.size() - 1);
 
         if (LocalDateTime.now().isAfter(resultEntity.getExpiredAt())) {
             // log.warn("not correct date");

@@ -14,7 +14,8 @@ import java.util.UUID;
 
 @Repository
 public interface VerificationCodesRepository extends JpaRepository<VerificationCodeEntity, UUID> {
-    Optional<List<VerificationCodeEntity>> findByEmail(String email);
+    List<VerificationCodeEntity> findAllByEmail(String email);
+    List<VerificationCodeEntity> findAll();
     @Transactional(timeout = 7200, isolation = Isolation.SERIALIZABLE)
     @Modifying
     @Query("delete FROM VerificationCodeEntity vce where vce.expiredAt <= current_timestamp")

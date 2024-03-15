@@ -1,6 +1,7 @@
 package app.auth.servicies;
 
 import app.auth.dto.request.EmailVerificationRequest;
+import app.auth.entities.VerificationCodeEntity;
 import app.auth.repositories.VerificationCodesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +28,14 @@ public class EmailService {
     public void verifyEmail(EmailVerificationRequest emailVerificationRequest) {
         verificationCodesService.checkVerificationRequest(emailVerificationRequest);
     }
+    public List<VerificationCodeEntity> getVerificationCodes() {
+        return verificationCodesRepository.findAll();
+    }
     public void sendVerificationCodeToEmail(String email) {
-        var result = verificationCodesRepository.findByEmail(email);
+        var result = verificationCodesRepository.findAllByEmail(email);
 
-        if (result.isPresent() &&
-                !result.get().isEmpty() &&
-                result.get().get(result.get().size() - 1).getExpiredAt().isAfter(LocalDateTime.now())) {
+        if (!result.isEmpty() &&
+                result.get(result.size() - 1).getExpiredAt().isAfter(LocalDateTime.now())) {
             // log.warn("verification code has already send to email %s", email);
             throw new IllegalArgumentException("invalid request");
         }
