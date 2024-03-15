@@ -44,7 +44,7 @@ public class VerificationCodesService {
             throw new IllegalArgumentException("invalid request!");
         }
 
-        if (!resultEntity.getVerificationCode().equals(encoder.encode(emailVerificationRequest.getVerificationCode()))) {
+        if (!encoder.matches(emailVerificationRequest.getVerificationCode(), resultEntity.getVerificationCode())) {
             // log.warn("not correct verification code");
             throw new IllegalArgumentException("invalid request!");
         }

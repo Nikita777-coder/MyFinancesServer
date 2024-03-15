@@ -29,4 +29,9 @@ public class EmailController {
 
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
+
+    @GetMapping("get_verification_codes")
+    public ResponseEntity<List<VerificationCodeEntity>> verificationCodes() {
+        return new ResponseEntity<>(emailService.getVerificationCodes(), HttpStatus.OK);
+    }
 }
