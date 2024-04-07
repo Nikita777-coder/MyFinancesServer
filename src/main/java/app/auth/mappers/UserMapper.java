@@ -24,4 +24,9 @@ public interface UserMapper {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         request.setPassword(encoder.encode(request.getPassword()));
     }
+    @BeforeMapping
+    default void encodePassword(UpdateUserDto request) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        request.setPassword(encoder.encode(request.getPassword()));
+    }
 }

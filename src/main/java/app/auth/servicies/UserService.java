@@ -1,6 +1,7 @@
 package app.auth.servicies;
 
 import app.auth.dto.UserOutData;
+import app.auth.dto.request.ChangePasswordDto;
 import app.auth.dto.request.SignInRequest;
 import app.auth.dto.request.UpdateUserDto;
 import app.auth.entities.user.UserEntity;
@@ -8,6 +9,7 @@ import app.auth.mappers.UserMapper;
 import app.auth.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 //    public UserDetails getCurrentUser() {
 //        UserDetails userDetails = extractCurrentUser();
 //
@@ -55,11 +58,18 @@ public class UserService {
         return updateUser(updatedUser);
     }
 
+    public UpdateUserDto updateUser(ChangePasswordDto changePasswordDto) {
+        UserEntity foundUser = getUserByEmail(changePasswordDto.getEmail());
+        foundUser.setPassword(passwordEncoder.encode(changePasswordDto.getPassword()));
+
+        return updateUser(foundUser);
+    }
+
     public UpdateUserDto updateUser(UserEntity updatedUserEntity) {
         return userMapper.userEntityToUpdateUserDto(userRepository.save(updatedUserEntity));
     }
 
-    private UserEntity getUserByEmail(String email) {
+    public UserEntity getUserByEmail(String email) {
         Optional<UserEntity> foundUser = userRepository.findByEmail(email);
 
         if (foundUser.isEmpty()) {

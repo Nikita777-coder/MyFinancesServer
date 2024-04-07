@@ -1,7 +1,7 @@
 package app.auth.servicies;
 
 import app.auth.dto.request.EmailVerificationRequest;
-import app.auth.entities.VerificationCodeEntity;
+import app.auth.repositories.UserRepository;
 import app.auth.repositories.VerificationCodesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +23,12 @@ public class EmailService {
     private int verificationCodeLength;
     private final JavaMailSender mailSender;
     private final VerificationCodesService verificationCodesService;
+    private final UserRepository userRepository;
     private final VerificationCodesRepository verificationCodesRepository;
     public void verifyEmail(EmailVerificationRequest emailVerificationRequest) {
         verificationCodesService.checkVerificationRequest(emailVerificationRequest);
     }
-    public List<VerificationCodeEntity> getVerificationCodes() {
-        return verificationCodesRepository.findAll();
-    }
+
     public void sendVerificationCodeToEmail(String email) {
         var result = verificationCodesRepository.findAllByEmail(email);
 
@@ -50,6 +48,9 @@ public class EmailService {
 
         mailSender.send(mailMessage);
         verificationCodesService.addNewVerificationCode(new EmailVerificationRequest(email, generatedVerificationPassword));
+    }
+    public boolean isEmailExists(String email) {
+        return userRepository.existsByEmail(email);
     }
     private String generateSafeVerificationCode() {
         SecureRandom random = new SecureRandom();

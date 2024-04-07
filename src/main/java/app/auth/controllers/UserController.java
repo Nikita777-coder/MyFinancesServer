@@ -1,6 +1,8 @@
 package app.auth.controllers;
 
+import app.auth.dto.request.ChangePasswordDto;
 import app.auth.dto.request.UpdateUserDto;
+import app.auth.mappers.UserMapper;
 import app.auth.servicies.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +18,11 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    @GetMapping("/email_exist")
-    public ResponseEntity<Boolean> getEmail(@RequestBody String email) {
-        Boolean response = userService.isEmailExist(email);
+    @GetMapping("/get_user_by_email")
+    public ResponseEntity<UpdateUserDto> getUserByEmail(@RequestParam String email) {
+        UpdateUserDto response = userMapper.userEntityToUpdateUserDto(userService.getUserByEmail(email));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -27,5 +30,11 @@ public class UserController {
     public ResponseEntity<UpdateUserDto> updateUser(@Valid @RequestBody UpdateUserDto userUpdatedData) {
         UpdateUserDto response = userService.updateUser(userUpdatedData);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/update_password_profile")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
+        userService.updateUser(changePasswordDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

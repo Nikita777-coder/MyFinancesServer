@@ -29,4 +29,9 @@ public class EmailController {
 
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
+
+    @GetMapping("is_email_exists")
+    public ResponseEntity<Boolean> isEmailExists(@RequestParam("email") String email) {
+        return new ResponseEntity<>(emailService.isEmailExists(email), HttpStatus.OK);
+    }
 }
