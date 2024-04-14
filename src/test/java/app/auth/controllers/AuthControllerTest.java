@@ -96,7 +96,7 @@ class AuthControllerTest {
         input.setEmail("some@mail.ru");
         input.setPassword("password01");
 
-        ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
+        ResponseEntity<UserOutData> response = restTemplate.postForEntity("/auth/signin", input, UserOutData.class);
         assertSame(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -111,8 +111,8 @@ class AuthControllerTest {
         input.setEmail("some@mail.ru");
         input.setPassword("password01");
 
-        ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
-        ResponseEntity<String> response1 = restTemplate.postForEntity("/auth/signin", input, String.class);
+        ResponseEntity<UserOutData> response = restTemplate.postForEntity("/auth/signin", input, UserOutData.class);
+        ResponseEntity<UserOutData> response1 = restTemplate.postForEntity("/auth/signin", input, UserOutData.class);
         assertTrue(response.getStatusCode() == HttpStatus.OK &&
                 response1.getStatusCode() == HttpStatus.FORBIDDEN);
     }
@@ -127,7 +127,7 @@ class AuthControllerTest {
         input.setEmail("somemail.ru");
         input.setPassword("password01");
 
-        ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
+        ResponseEntity<UserOutData> response = restTemplate.postForEntity("/auth/signin", input, UserOutData.class);
         assertSame(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

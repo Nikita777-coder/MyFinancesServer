@@ -20,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Objects;
@@ -38,6 +39,9 @@ class UserControllerTest {
     @Mock
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Mock
     private UserMapper userMapper;
 
@@ -46,7 +50,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, userMapper);
+        userService = new UserService(userRepository, userMapper, passwordEncoder);
     }
     @Test
     @DisplayName("updateUser test; give email UpdateUserDto(blabla@me.ru); must return BAD_REQUEST with message \"User not found\"")

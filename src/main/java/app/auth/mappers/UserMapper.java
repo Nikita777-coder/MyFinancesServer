@@ -4,9 +4,7 @@ import app.auth.dto.UserOutData;
 import app.auth.dto.request.SignUpRequest;
 import app.auth.dto.request.UpdateUserDto;
 import app.auth.entities.user.UserEntity;
-import org.mapstruct.BeforeMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -28,5 +26,9 @@ public interface UserMapper {
     default void encodePassword(UpdateUserDto request) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         request.setPassword(encoder.encode(request.getPassword()));
+    }
+    @AfterMapping
+    default void setActiveToSignUp(SignUpRequest request, @MappingTarget UserEntity target) {
+        target.setIsActive(false);
     }
 }

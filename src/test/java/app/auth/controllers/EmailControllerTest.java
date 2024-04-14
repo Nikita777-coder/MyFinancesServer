@@ -2,6 +2,7 @@ package app.auth.controllers;
 
 import app.auth.dto.request.EmailVerificationRequest;
 import app.auth.entities.VerificationCodeEntity;
+import app.auth.repositories.UserRepository;
 import app.auth.repositories.VerificationCodesRepository;
 import app.auth.servicies.EmailService;
 import app.auth.servicies.VerificationCodesService;
@@ -50,6 +51,9 @@ class EmailControllerTest {
     @Mock
     private JavaMailSender javaMailSender;
 
+    @Mock
+    private UserRepository userRepository;
+
     private final List<String> testEmails = Arrays.asList("reta2224@jcnorris.com", "ckk0xg0320@waterisgone.com", "mflwk2b5sp@maili.fun");
 
     @Autowired
@@ -58,7 +62,7 @@ class EmailControllerTest {
     @BeforeEach
     void setUp() {
         verificationCodesService = new VerificationCodesService(verificationCodesRepository, passwordEncoder);
-        emailService = new EmailService(javaMailSender, verificationCodesService, verificationCodesRepository);
+        emailService = new EmailService(javaMailSender, verificationCodesService, userRepository, verificationCodesRepository);
     }
     @Test
     @DisplayName("send verification code test; give first email from testEmails; must return 201 (CREATED) status code")
@@ -128,7 +132,7 @@ class EmailControllerTest {
 
         when(verificationCodesService.addNewVerificationCode(new EmailVerificationRequest())).thenReturn(new VerificationCodeEntity());
         when(passwordEncoder.encode("1234")).thenReturn("1234");
-        when(verificationCodesRepository.findByEmail(testEmails.get(0))).thenReturn(Optional.of(entities));
+        when(verificationCodesRepository.findAllByEmail(testEmails.get(0))).thenReturn(entities);
         emailService.sendVerificationCodeToEmail(testEmails.get(0));
 
         mockStatic(LocalDateTime.class);
@@ -158,7 +162,7 @@ class EmailControllerTest {
 
         when(verificationCodesService.addNewVerificationCode(new EmailVerificationRequest())).thenReturn(new VerificationCodeEntity());
         when(passwordEncoder.encode("1234")).thenReturn("1234");
-        when(verificationCodesRepository.findByEmail(testEmails.get(0))).thenReturn(Optional.of(entities));
+        when(verificationCodesRepository.findAllByEmail(testEmails.get(0))).thenReturn(entities);
         emailService.sendVerificationCodeToEmail(testEmails.get(0));
 
         mockStatic(LocalDateTime.class);
@@ -180,7 +184,7 @@ class EmailControllerTest {
 
         when(verificationCodesService.addNewVerificationCode(new EmailVerificationRequest())).thenReturn(new VerificationCodeEntity());
         when(passwordEncoder.encode("1234")).thenReturn("1234");
-        when(verificationCodesRepository.findByEmail(testEmails.get(0))).thenReturn(Optional.of(entities));
+        when(verificationCodesRepository.findAllByEmail(testEmails.get(0))).thenReturn(entities);
         emailService.sendVerificationCodeToEmail(testEmails.get(0));
 
         mockStatic(LocalDateTime.class);

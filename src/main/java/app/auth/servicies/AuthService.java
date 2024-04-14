@@ -24,7 +24,7 @@ public class AuthService {
         return userService.createUser(userMapper.signUpDtoToUserEntity(request));
     }
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void signin(SignInRequest request) {
+    public UserOutData signin(SignInRequest request) {
         // emailService.sendSomeoneTryToEnterToYourAccountMessage()
         checkActiveAccount(request);
         UserEntity resultUser = userService.getUser(request);
@@ -35,6 +35,8 @@ public class AuthService {
 
         resultUser.setIsActive(true);
         userService.updateUser(resultUser);
+
+        return userMapper.userEntityToUserOutData(resultUser);
     }
     private void checkActiveAccount(SignInRequest request) {
         if (userService.isActive(request)) {

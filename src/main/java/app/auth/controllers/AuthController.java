@@ -30,9 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> enter(@Valid @RequestBody SignInRequest request) {
-        authService.signin(request);
-        return new ResponseEntity<>("success", HttpStatus.OK);
+    public ResponseEntity<UserOutData> enter(@Valid @RequestBody SignInRequest request) {
+        return new ResponseEntity<>(authService.signin(request), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
