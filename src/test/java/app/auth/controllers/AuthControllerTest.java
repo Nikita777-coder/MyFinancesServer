@@ -96,7 +96,7 @@ class AuthControllerTest {
         input.setEmail("some@mail.ru");
         input.setPassword("password01");
 
-        ResponseEntity<UserOutData> response = restTemplate.postForEntity("/auth/signin", input, UserOutData.class);
+        ResponseEntity<String> response = restTemplate.postForEntity("/auth/signin", input, String.class);
         assertSame(HttpStatus.OK, response.getStatusCode());
     }
 

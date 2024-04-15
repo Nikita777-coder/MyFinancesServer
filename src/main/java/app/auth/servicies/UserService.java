@@ -34,7 +34,8 @@ public class UserService {
         }
 
         //entity.setIsActive(true);
-        return userMapper.userEntityToUserOutData(userRepository.save(entity));
+        var ent = userRepository.save(entity);
+        return userMapper.userEntityToUserOutData(ent);
     }
     public UserEntity getUser(SignInRequest request) {
         if (request.getLogin() == null) {
@@ -52,7 +53,7 @@ public class UserService {
     public UpdateUserDto updateUser(UpdateUserDto userUpdatedData) {
         UserEntity foundUser = getUserByEmail(userUpdatedData.getRequestEmail());
 
-        UserEntity updatedUser = userMapper.updateUserDtoToUserEntity(userUpdatedData);
+        UserEntity updatedUser = userMapper.updateUserDtoToUserEntity(userUpdatedData, passwordEncoder);
         updatedUser.setId(foundUser.getId());
 
         return updateUser(updatedUser);

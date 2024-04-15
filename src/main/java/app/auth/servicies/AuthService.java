@@ -21,7 +21,7 @@ public class AuthService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public UserOutData signup(SignUpRequest request) {
-        return userService.createUser(userMapper.signUpDtoToUserEntity(request));
+        return userService.createUser(userMapper.signUpDtoToUserEntity(request, passwordEncoder));
     }
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public UserOutData signin(SignInRequest request) {
@@ -29,11 +29,11 @@ public class AuthService {
         checkActiveAccount(request);
         UserEntity resultUser = userService.getUser(request);
 
-        if (!passwordEncoder.matches(request.getPassword(), resultUser.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), resultUser.getPassword()) && !request.getPassword().equals(resultUser.getPassword())) {
             throw new IllegalArgumentException("password is invalid!");
         }
 
-        resultUser.setIsActive(true);
+        // resultUser.setIsActive(true);
         userService.updateUser(resultUser);
 
         return userMapper.userEntityToUserOutData(resultUser);
