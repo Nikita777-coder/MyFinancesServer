@@ -1,4 +1,4 @@
-package app.auth.dto;
+package app.auth.dto.foo;
 
 import java.math.BigDecimal;
 

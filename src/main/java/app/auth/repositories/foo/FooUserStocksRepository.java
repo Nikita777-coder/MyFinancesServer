@@ -1,6 +1,6 @@
-package app.auth.repositories;
+package app.auth.repositories.foo;
 
-import app.auth.entities.FooUserStockEntity;
+import app.auth.entities.foo.FooUserStockEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

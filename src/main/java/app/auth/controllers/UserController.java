@@ -1,5 +1,6 @@
 package app.auth.controllers;
 
+import app.auth.dto.UserOutData;
 import app.auth.dto.request.ChangePasswordDto;
 import app.auth.dto.request.UpdateUserDto;
 import app.auth.mappers.UserMapper;
@@ -21,8 +22,8 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/get_user_by_email")
-    public ResponseEntity<UpdateUserDto> getUserByEmail(@RequestParam String email) {
-        UpdateUserDto response = userMapper.userEntityToUpdateUserDto(userService.getUserByEmail(email));
+    public ResponseEntity<UserOutData> getUserByEmail(@RequestParam String email) {
+        UserOutData response = userMapper.userEntityToUserOutData(userService.getUserByEmail(email));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -33,8 +34,8 @@ public class UserController {
     }
 
     @PatchMapping("/update_password_profile")
-    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
-        userService.updateUser(changePasswordDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserOutData> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
+        var res = userService.updateUser(changePasswordDto);
+        return new ResponseEntity<>(userMapper.updateUserDtoToUserOutData(res), HttpStatus.OK);
     }
 }

@@ -1,11 +1,13 @@
 package app.auth.servicies;
 
-import app.auth.dto.FooMarketStock;
-import app.auth.dto.FooUserStock;
-import app.auth.entities.FooMarketStockEntity;
+import app.auth.dto.foo.FooMarketStock;
+import app.auth.dto.foo.FooUserPortfolioRisk;
+import app.auth.dto.foo.FooUserStock;
+import app.auth.entities.foo.FooMarketStockEntity;
 import app.auth.mappers.FooUserStockMapper;
-import app.auth.repositories.FooMarketStockRepository;
-import app.auth.repositories.FooUserStocksRepository;
+import app.auth.repositories.foo.FooMarketStockRepository;
+import app.auth.repositories.foo.FooUserPortfolioRiskRepository;
+import app.auth.repositories.foo.FooUserStocksRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -19,6 +21,7 @@ public class FooService {
     private final FooUserStockMapper fooUserStockMapper;
     private final FooUserStocksRepository fooUserStocksRepository;
     private final FooMarketStockRepository fooMarketStockRepository;
+    private final FooUserPortfolioRiskRepository fooUserPortfolioRiskRepository;
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void saveUserStocks(List<FooUserStock> userStocks, String email) {
         for (var userStock : userStocks) {
@@ -42,5 +45,17 @@ public class FooService {
         var answer = fooUserStockMapper.
                 fooMarketStockEntitiesToFooMarketStocks(fooMarketStockRepository.findAll());;
         return answer;
+    }
+    public void saveUserPortfolioRisk(FooUserPortfolioRisk userPortfolioRisk) {
+        fooUserPortfolioRiskRepository.save(fooUserStockMapper.fooUserPortfolioRiskToFooUserPortfolioRiskEntity(userPortfolioRisk));
+    }
+    public FooUserPortfolioRisk getUserPortfolioRisk(String email) {
+        var ans = fooUserPortfolioRiskRepository.getUserPortfolioRiskEntitiesByEmail(email);
+
+        if (ans.isEmpty()) {
+            throw new IllegalArgumentException("there is no risk data in user");
+        }
+
+        return fooUserStockMapper.fooUserPortfolioRiskEntityToFooUserPortfolioRisk(ans.get());
     }
 }

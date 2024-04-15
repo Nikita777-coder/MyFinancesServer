@@ -1,7 +1,8 @@
 package app.auth.controllers;
 
-import app.auth.dto.FooMarketStock;
-import app.auth.dto.FooUserStock;
+import app.auth.dto.foo.FooMarketStock;
+import app.auth.dto.foo.FooUserPortfolioRisk;
+import app.auth.dto.foo.FooUserStock;
 import app.auth.servicies.FooService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,15 @@ public class FooController {
     @ResponseStatus(HttpStatus.OK)
     public List<FooMarketStock> getMarketStocks() {
         return fooService.getMarketStocks();
+    }
+    @PostMapping("/save-user-risk")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void saveUserRisk(@RequestBody FooUserPortfolioRisk fooUserPortfolioRisk) {
+        fooService.saveUserPortfolioRisk(fooUserPortfolioRisk);
+    }
+    @GetMapping("/get-user-risk")
+    @ResponseStatus(HttpStatus.OK)
+    public FooUserPortfolioRisk getUserRisk(@RequestParam("email") String email) {
+        return fooService.getUserPortfolioRisk(email);
     }
 }

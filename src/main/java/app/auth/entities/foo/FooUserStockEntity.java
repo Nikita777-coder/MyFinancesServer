@@ -1,4 +1,4 @@
-package app.auth.entities;
+package app.auth.entities.foo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
