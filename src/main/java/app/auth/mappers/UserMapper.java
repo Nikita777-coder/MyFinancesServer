@@ -19,6 +19,8 @@ public interface UserMapper {
     UserEntity updateUserDtoToUserEntity(UpdateUserDto updateUserDto, PasswordEncoder encoder);
     @Mapping(target = "requestEmail", source = "email")
     UpdateUserDto userEntityToUpdateUserDto(UserEntity userEntity);
+    @Mapping(source = "requestEmail", target = "email")
+    UserOutData updateUserDtoToUserOutData(UpdateUserDto updateUserDto);
     @BeforeMapping
     default void encodePassword(SignUpRequest request, PasswordEncoder encoder) {
         // request.setPassword(encoder.encode(request.getPassword()));

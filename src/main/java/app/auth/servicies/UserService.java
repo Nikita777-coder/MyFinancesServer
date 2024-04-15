@@ -55,13 +55,15 @@ public class UserService {
 
         UserEntity updatedUser = userMapper.updateUserDtoToUserEntity(userUpdatedData, passwordEncoder);
         updatedUser.setId(foundUser.getId());
+        updatedUser.setIsActive(false);
 
         return updateUser(updatedUser);
     }
 
     public UpdateUserDto updateUser(ChangePasswordDto changePasswordDto) {
         UserEntity foundUser = getUserByEmail(changePasswordDto.getEmail());
-        foundUser.setPassword(passwordEncoder.encode(changePasswordDto.getPassword()));
+        foundUser.setPassword(changePasswordDto.getPassword()/*passwordEncoder.encode(changePasswordDto.getPassword())*/);
+        foundUser.setIsActive(false);
 
         return updateUser(foundUser);
     }
