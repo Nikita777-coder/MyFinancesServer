@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FooMarketStock {
+public class MarketStock {
     private String symbol;
     private String companyName;
     private double latestPrice;

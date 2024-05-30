@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FooUserPortfolioRisk {
+public class UserPortfolioRisk {
     private String email;
     private double currentRisk;
     private double previousRisk;
