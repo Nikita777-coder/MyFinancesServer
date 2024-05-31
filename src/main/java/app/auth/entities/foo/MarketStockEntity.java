@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FooMarketStockEntity {
+public class MarketStockEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

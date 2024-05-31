@@ -1,18 +1,16 @@
 package app.auth.controllers;
 
 import app.auth.dto.request.UpdateUserDto;
-import app.auth.entities.user.UserEntity;
 import app.auth.mappers.UserMapper;
 import app.auth.repositories.UserRepository;
 import app.auth.servicies.UserService;
+import app.auth.servicies.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -24,10 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,7 +46,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, userMapper, passwordEncoder);
+        userService = new UserServiceImpl(userRepository, userMapper, passwordEncoder);
     }
     @Test
     @DisplayName("updateUser test; give email UpdateUserDto(blabla@me.ru); must return BAD_REQUEST with message \"User not found\"")

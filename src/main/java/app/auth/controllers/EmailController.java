@@ -1,14 +1,11 @@
 package app.auth.controllers;
 
 import app.auth.dto.request.EmailVerificationRequest;
-import app.auth.entities.VerificationCodeEntity;
 import app.auth.servicies.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("email")
