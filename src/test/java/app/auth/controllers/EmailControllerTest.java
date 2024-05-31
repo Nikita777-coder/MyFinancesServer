@@ -5,7 +5,8 @@ import app.auth.entities.VerificationCodeEntity;
 import app.auth.repositories.UserRepository;
 import app.auth.repositories.VerificationCodesRepository;
 import app.auth.servicies.EmailService;
-import app.auth.servicies.VerificationCodesService;
+import app.auth.servicies.impl.EmailServiceImpl;
+import app.auth.servicies.impl.VerificationCodesServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
@@ -40,7 +44,7 @@ class EmailControllerTest {
     private EmailService emailService;
 
     @Mock
-    private VerificationCodesService verificationCodesService;
+    private VerificationCodesServiceImpl verificationCodesService;
 
     @Mock
     private VerificationCodesRepository verificationCodesRepository;
@@ -61,8 +65,8 @@ class EmailControllerTest {
 
     @BeforeEach
     void setUp() {
-        verificationCodesService = new VerificationCodesService(verificationCodesRepository, passwordEncoder);
-        emailService = new EmailService(javaMailSender, verificationCodesService, userRepository, verificationCodesRepository);
+        verificationCodesService = new VerificationCodesServiceImpl(verificationCodesRepository, passwordEncoder);
+        emailService = new EmailServiceImpl(javaMailSender, verificationCodesService, userRepository, verificationCodesRepository);
     }
     @Test
     @DisplayName("send verification code test; give first email from testEmails; must return 201 (CREATED) status code")

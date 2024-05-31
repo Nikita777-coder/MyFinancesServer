@@ -3,13 +3,11 @@ package app.auth.controllers;
 import app.auth.dto.UserOutData;
 import app.auth.dto.request.SignInRequest;
 import app.auth.dto.request.SignUpRequest;
-import app.auth.entities.user.UserEntity;
 import app.auth.servicies.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +19,7 @@ import java.util.Map;
 @RequestMapping("auth")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
 
     @PostMapping("/signup")
